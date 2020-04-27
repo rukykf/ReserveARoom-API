@@ -6,6 +6,7 @@ exports.up = function (knex) {
       table.string("name")
       table.string("description")
       table.boolean("active").defaultTo(true)
+      table.unique("name")
     })
     .then(() => {
       console.log("created room_types")
@@ -17,6 +18,7 @@ exports.up = function (knex) {
       table.integer("room_no")
       table.integer("room_type_id")
       table.boolean("active").defaultTo(true)
+      table.unique("room_no")
     })
     .then(() => {
       console.log("created rooms")
@@ -27,6 +29,7 @@ exports.up = function (knex) {
       table.increments("id")
       table.string("name")
       table.boolean("active").defaultTo(true)
+      table.unique("name")
     })
     .then(() => {
       console.log("created roles")
@@ -36,11 +39,11 @@ exports.up = function (knex) {
     .createTable("users", (table) => {
       table.increments("id")
       table.string("username")
-      table.string("first_name")
-      table.string("last_name")
+      table.string("full_name")
       table.string("password")
       table.integer("role_id")
       table.boolean("active").defaultTo(true)
+      table.unique("username")
     })
     .then(() => {
       console.log("created users")
