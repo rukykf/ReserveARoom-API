@@ -2,3 +2,5 @@
 !.gitkeep
 Vagrantfile
 node_modules/
+*.db
+/**/*.db
