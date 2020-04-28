@@ -40,7 +40,7 @@ exports.up = function (knex) {
       table.increments("id")
       table.string("username")
       table.string("full_name")
-      table.string("password")
+      table.string("password_hash")
       table.integer("role_id")
       table.boolean("active").defaultTo(true)
       table.unique("username")

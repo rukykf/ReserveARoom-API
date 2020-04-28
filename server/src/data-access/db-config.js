@@ -1,9 +1,10 @@
 const dotenv = require("dotenv")
 const { Model } = require("objection")
+const { AjvValidator } = require("objection")
 const knex = require("knex")
-const config = require("./knexfile")
+const config = require("../../knexfile")
 
-dotenv.config({ path: "../../.env" })
+// dotenv.config({ path: "../../.env" })
 
 let db = null
 if (process.env.NODE_ENV === "development") {
@@ -18,7 +19,7 @@ class BaseModel extends Model {
   static createValidator() {
     return new AjvValidator({
       onCreateAjv(ajv) {
-        require("ajv-keywords")(ajv)
+        require("ajv-keywords")(ajv, "transform")
       },
     })
   }

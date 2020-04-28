@@ -1,4 +1,3 @@
-const { ValidationError } = require("objection")
 const Objection = require("../db-config")
 const Role = require("./Role")
 
@@ -23,7 +22,7 @@ class User extends Objection {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["username", "first_name", "last_name", "password", "role_id"],
+      required: ["username", "full_name", "password_hash", "role_id"],
       properties: {
         id: { type: "integer" },
         username: { type: "string", minLength: 1, transform: ["trim", "toLowerCase"] },
