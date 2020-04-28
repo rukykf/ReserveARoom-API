@@ -62,7 +62,7 @@ async function setupAdminUser(role) {
     password_hash: passwordHash,
     role_id: role.id,
   })
-  console.log(`Administrator ${fullName} has been created successfully`)
+  console.log(`Administrator ${fullName} was created successfully`)
 }
 
 async function init() {
@@ -74,7 +74,32 @@ async function init() {
 
     let user = await User.query().first()
     if (user != null) {
-      console.log("Admin user has been configured")
+      var response = await prompt({
+        type: "text",
+        name: "resetPassword",
+        message: "Admin user has already been configured, do you want to reset the user's password? (y/n)",
+        validate: (resetPassword) => {
+          if (resetPassword.toLowerCase() !== "y" && resetPassword.toLowerCase() !== "n") {
+            return `Please enter y for yes or n for no`
+          }
+          return true
+        },
+      })
+      if (response.resetPassword.toLowerCase() === "y") {
+        response = await prompt({
+          type: "password",
+          name: "password",
+          message: "Enter the administrator's password: ",
+          validate: (password) => {
+            return password.length < 8 ? `password should be at least 8 characters long` : true
+          },
+        })
+        let passwordHash = bcrypt.hashSync(response.password, 10)
+        await User.query().findById(user.id).patch({ password_hash: passwordHash })
+        console.log("Successfully reset administrator's password")
+      }
+
+      console.log("Bye")
       process.exit()
     }
     await setupAdminUser(role)
