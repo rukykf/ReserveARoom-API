@@ -1,4 +1,5 @@
 const Objection = require("../db-config")
+const { DateTime } = require("luxon")
 
 class Reservation extends Objection {
   static get tableName() {
@@ -32,12 +33,23 @@ class Reservation extends Objection {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["room_id", "start_date", "end_date", "guest_name", "guest_phone_number", "status"],
+      required: [
+        "room_id",
+        "start_date",
+        "end_date",
+        "start_datetime",
+        "end_datetime",
+        "guest_name",
+        "guest_phone_number",
+        "status",
+      ],
       properties: {
         id: { type: "integer" },
         room_id: { type: "integer" },
         end_date: { type: "string", transform: ["trim"] },
         start_date: { type: "string", transform: ["trim"] },
+        start_datetime: { type: "string", transform: ["trim"] },
+        end_datetime: { type: "string" },
         guest_name: { type: "string", transform: ["trim", "toLowerCase"] },
         guest_phone_number: { type: "string", transform: ["trim"] },
         status: { type: "string", enum: ["pending-confirmation", "failed-confirmation", "open", "closed", "expired"] },
@@ -46,12 +58,15 @@ class Reservation extends Objection {
   }
 
   $beforeInsert(queryContext) {
-    this.created_at = DateTime.local().toISO()
-    this.updated_at = DateTime.local().toISO()
+    if (this.created_at == null) {
+      this.created_at = DateTime.local().toISODate()
+    }
+
+    this.updated_at = DateTime.local().toISODate()
   }
 
   $beforeUpdate(opt, queryContext) {
-    this.updated_at = DateTime.local().toISO()
+    this.updated_at = DateTime.local().toISODate()
   }
 }
 

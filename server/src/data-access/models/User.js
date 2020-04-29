@@ -25,9 +25,9 @@ class User extends Objection {
       required: ["username", "full_name", "password_hash", "role_id"],
       properties: {
         id: { type: "integer" },
-        username: { type: "string", minLength: 1, transform: ["trim", "toLowerCase"] },
+        username: { type: "string", minLength: 1, transform: ["trim"] },
         full_name: { type: "string", minLength: 2, transform: ["trim", "toLowerCase"] },
-        password: { type: "string" },
+        password_hash: { type: "string" },
         role_id: { type: "integer" },
       },
     }

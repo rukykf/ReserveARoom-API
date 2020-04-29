@@ -56,6 +56,8 @@ exports.up = function (knex) {
       table.timestamps()
       table.string("start_date")
       table.string("end_date")
+      table.string("start_datetime")
+      table.string("end_datetime")
       table.string("guest_phone_number")
       table.string("guest_name")
       table
@@ -71,7 +73,7 @@ exports.up = function (knex) {
       table.increments("id")
       table.timestamps()
       table.integer("reservation_id")
-      table.integer("otp")
+      table.string("otp_code")
     })
     .then(() => {
       console.log("created otps")

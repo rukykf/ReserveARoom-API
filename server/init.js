@@ -106,7 +106,7 @@ async function init() {
     process.exit()
   } catch (error) {
     console.error(chalk.red("Something went wrong."))
-    console.error(chalk.red("Confirm that your environment variables are properly configured in .env."))
+    console.error(chalk.red("Confirm that your environment variables are properly configured in .env"))
     console.error(chalk.red("Confirm that you've run the database migrations for this application and then try again."))
     process.exit()
   }

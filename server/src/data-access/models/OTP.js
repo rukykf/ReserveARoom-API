@@ -24,17 +24,20 @@ class OTP extends Objection {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["reservation_id", "otp"],
+      required: ["reservation_id", "otp_code"],
       properties: {
         id: { type: "integer" },
         reservation_id: { type: "integer" },
-        otp: { type: "integer" },
+        otp_code: { type: "string" },
       },
     }
   }
 
   $beforeInsert(queryContext) {
-    this.created_at = DateTime.local().toISO()
+    if (this.created_at == null) {
+      this.created_at = DateTime.local().toISO()
+    }
+
     this.updated_at = DateTime.local().toISO()
   }
 
@@ -42,3 +45,5 @@ class OTP extends Objection {
     this.updated_at = DateTime.local().toISO()
   }
 }
+
+module.exports = OTP

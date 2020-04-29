@@ -4,14 +4,7 @@ const { AjvValidator } = require("objection")
 const knex = require("knex")
 const config = require("../../knexfile")
 
-// dotenv.config({ path: "../../.env" })
-
-let db = null
-if (process.env.NODE_ENV === "development") {
-  db = knex(config.development)
-} else {
-  db = knex(config.production)
-}
+let db = knex(config.development)
 
 Model.knex(db)
 
