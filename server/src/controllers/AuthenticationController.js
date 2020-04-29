@@ -13,7 +13,9 @@ module.exports = {
         .throwIfNotFound()
 
       if (bcrypt.compareSync(_.get(req, ["body", "password"]), user.password_hash)) {
-        return res.json({ full_name: user.full_name, username: user.username, role: user.role, role_id: user.role_id })
+        let userData = { full_name: user.full_name, username: user.username, role: user.role, role_id: user.role_id }
+        req.session.user = userData
+        return res.json(userData)
       } else {
         return res.status(400).json({ message: "invalid login credentials" })
       }
@@ -23,5 +25,12 @@ module.exports = {
       }
       return res.status(500).json({ message: "something went wrong" })
     }
+  },
+
+  logout(req, res) {
+    if (req.session) {
+      req.session.destroy()
+    }
+    res.json({ message: "closed" })
   },
 }

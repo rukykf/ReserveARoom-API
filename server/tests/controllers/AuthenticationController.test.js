@@ -21,6 +21,7 @@ test("AuthenticationController.login returns authenticated user when passed vali
   }
   let res = { json: jest.fn() }
   await AuthenticationController.login(req, res)
+  expect(req.session).toMatchObject({ username: "myuser", full_name: "firstname lastname", role_id: newRole.id })
   expect(res.json).toHaveBeenCalledWith(
     expect.objectContaining({ username: "myuser", full_name: "firstname lastname", role_id: newRole.id })
   )
