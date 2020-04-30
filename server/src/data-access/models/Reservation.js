@@ -52,7 +52,10 @@ class Reservation extends Objection {
         end_datetime: { type: "string" },
         guest_name: { type: "string", transform: ["trim", "toLowerCase"] },
         guest_phone_number: { type: "string", transform: ["trim"] },
-        status: { type: "string", enum: ["pending-confirmation", "failed-confirmation", "open", "closed", "expired"] },
+        status: {
+          type: "string",
+          enum: ["pending-confirmation", "failed-confirmation", "open", "closed", "activated", "expired"],
+        },
       },
     }
   }

@@ -60,7 +60,9 @@ async function checkReservationForConflicts(req) {
   reservation = await Reservation.query()
     .where("start_date", "<=", startDate)
     .andWhere("end_date", ">=", startDate)
-    .andWhere("status", "=", "open")
+    .andWhere(function () {
+      this.where("status", "=", "open").orWhere("status", "=", "activated")
+    })
     .first()
 
   if (reservation != null) {
@@ -72,7 +74,9 @@ async function checkReservationForConflicts(req) {
   reservation = await Reservation.query()
     .where("start_date", "<=", endDate)
     .andWhere("end_date", ">=", endDate)
-    .andWhere("status", "=", "open")
+    .andWhere(function () {
+      this.where("status", "=", "open").orWhere("status", "=", "activated")
+    })
     .first()
 
   if (reservation != null) {
@@ -229,7 +233,9 @@ module.exports = {
     try {
       let reservations = await Reservation.query()
         .where("room_id", "=", _.toNumber(req.params.id))
-        .andWhere("status", "=", "open")
+        .andWhere(function () {
+          this.where("status", "=", "open").orWhere("status", "=", "activated")
+        })
 
       let reservationsCalendar = []
       reservations.forEach((reservation) => {

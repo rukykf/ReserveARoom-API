@@ -1,10 +1,17 @@
 // Generate some room_types, rooms and pictures of the various room types to seed the database
 const _ = require("lodash")
+const faker = require("faker")
+const { DateTime } = require("luxon")
+const dotenv = require("dotenv")
+
+dotenv.config("../../.env")
 
 let roomsCount = 1
 let roomPicturesCount = 1
+let reservationsCount = 1
 let rooms = []
-let otps = []
+let roomPictures = []
+let reservations = []
 
 const roomTypes = [
   { id: 1, price_per_night: 70, name: "classic", description: "1 small bed with 1 bath" },
@@ -18,26 +25,45 @@ const roomTypes = [
   },
 ]
 
+// There are four images prefixed with bedroom in the static files directory of this repo's root
+// Generate the Urls for these images and load them into an array
+let testPicturesUrls = []
+for (let i = 1; i < 5; i++) {
+  let url = `${process.env.APP_HOST}:${process.env.PORT}/bedroom-${i}.jpg`
+  testPicturesUrls.push(url)
+}
+
+roomTypes.forEach((roomType) => {
+  testPicturesUrls.forEach((pictureUrl) => {
+    roomPictures.push({
+      id: roomPicturesCount,
+      room_type_id: roomType.id,
+      image_url: pictureUrl,
+    })
+    roomPicturesCount += 1
+  })
+})
+
 function generateHistoricalReservations(room) {
-  let num = faker.random.arrayElement([0, 2, 5])
+  let num = faker.random.arrayElement([0, 1, 2])
   let currentDate = DateTime.local()
   for (let i = 0; i < num; i++) {
     let numBreaks = faker.random.arrayElement([3, 8, 30])
     let numDays = faker.random.arrayElement([2, 4, 7])
-    let closeDate = currentDate.minus({ days: numBreaks })
-    let startDate = closeDate.minus({ days: numDays })
-    let customerDetails = faker.random.arrayElement([
-      { customer_name: "Rukky Kofi", customer_phone: "081234567891" },
-      { customer_name: "Nero Kofi", customer_phone: "0813234444444" },
-    ])
+    let endDate = currentDate.minus({ days: numBreaks })
+    let startDate = endDate.minus({ days: numDays })
     currentDate = startDate
     let newReservation = {
       id: reservationsCount,
       room_id: room.id,
       created_at: startDate.toISODate(),
-      updated_at: closeDate.toISODate(),
-      close_date: closeDate.toISODate(),
-      customer_details: JSON.stringify(customerDetails),
+      updated_at: endDate.toISODate(),
+      start_date: startDate.toISODate(),
+      end_date: endDate.toISODate(),
+      start_datetime: startDate.toISO(),
+      end_datetime: endDate.toISO(),
+      guest_phone_number: "+00000000000",
+      guest_name: "guest name",
       status: "closed",
     }
     reservations.push(newReservation)
@@ -46,25 +72,25 @@ function generateHistoricalReservations(room) {
 }
 
 function generateUpcomingReservations(room) {
-  let num = faker.random.arrayElement([0, 2, 5])
+  let num = faker.random.arrayElement([0, 1, 2])
   let currentDate = DateTime.local()
   for (let i = 0; i < num; i++) {
     let numBreaks = faker.random.arrayElement([3, 8, 30])
     let numDays = faker.random.arrayElement([2, 4, 7])
     let startDate = currentDate.plus({ days: numBreaks })
-    let closeDate = startDate.plus({ days: numDays })
-    let customerDetails = faker.random.arrayElement([
-      { customer_name: "Rukky Kofi", customer_phone: "081234567891" },
-      { customer_name: "Nero Kofi", customer_phone: "0813234444444" },
-    ])
-    currentDate = closeDate
+    let endDate = startDate.plus({ days: numDays })
+    currentDate = endDate
     let newReservation = {
       id: reservationsCount,
       room_id: room.id,
       created_at: startDate.toISODate(),
-      updated_at: closeDate.toISODate(),
-      close_date: closeDate.toISODate(),
-      customer_details: JSON.stringify(customerDetails),
+      updated_at: endDate.toISODate(),
+      start_date: startDate.toISODate(),
+      end_date: endDate.toISODate(),
+      start_datetime: startDate.toISO(),
+      end_datetime: endDate.toISO(),
+      guest_phone_number: "+00000000000",
+      guest_name: "guest name",
       status: "open",
     }
     reservations.push(newReservation)
@@ -87,7 +113,9 @@ function generateRooms(num) {
   }
 }
 
-generateRooms(30)
+generateRooms(10)
 
 module.exports.roomTypes = roomTypes
 module.exports.rooms = rooms
+module.exports.roomPictures = roomPictures
+module.exports.reservations = reservations

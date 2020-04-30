@@ -61,7 +61,7 @@ exports.up = function (knex) {
       table.string("guest_phone_number")
       table.string("guest_name")
       table
-        .enum("status", ["pending-confirmation", "failed-confirmation", "open", "closed", "expired"])
+        .enum("status", ["pending-confirmation", "failed-confirmation", "open", "activated", "closed", "expired"])
         .defaultTo("pending-confirmation")
     })
     .then(() => {
