@@ -1,4 +1,5 @@
 const Objection = require("../db-config")
+const _ = require("lodash")
 
 class Room extends Objection {
   static get tableName() {
@@ -40,6 +41,12 @@ class Room extends Objection {
         room_type_id: { type: "integer" },
       },
     }
+  }
+
+  $parseDatabaseJson(json) {
+    super.$parseDatabaseJson(json)
+    json = _.omit(json, ["active"])
+    return json
   }
 }
 module.exports = Room

@@ -1,5 +1,6 @@
 const { ValidationError } = require("objection")
 const Objection = require("../db-config")
+const _ = require("lodash")
 
 class RoomType extends Objection {
   static get tableName() {
@@ -11,7 +12,7 @@ class RoomType extends Objection {
     const RoomPicture = require("./RoomPicture")
 
     return {
-      room: {
+      rooms: {
         relation: Objection.HasManyRelation,
         modelClass: Room,
         join: {
@@ -41,6 +42,12 @@ class RoomType extends Objection {
         description: { type: "string", transform: ["trim", "toLowerCase"] },
       },
     }
+  }
+
+  $parseDatabaseJson(json) {
+    super.$parseDatabaseJson(json)
+    json = _.omit(json, ["active"])
+    return json
   }
 }
 module.exports = RoomType
