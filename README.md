@@ -37,3 +37,6 @@ This will install  `node 10.x` and `yarn` You can then follow along with the Set
 
 ## Front-End
 Right now, the back-end is mostly finished. I intend to work on a Vue SPA eventually. 
+
+## Back-End
+Currently, the available endpoints are registered in `./server/src/routes.js`
