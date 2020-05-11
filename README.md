@@ -29,7 +29,7 @@ Run the tests (using Jest)
     yarn test
 
 ## Setup Instructions (Using Vagrant and Make)
-There's a Vagrant.example file and a Makefile containing utilities for setting up the application in a Vagrant box. The commands in Vagrantfile.example use VirtualBox as Vagrant's provider. You can copy the example into a Vagrantfile and make any necessary changes before spinning up your vm.
+There's a Vagrantfile.example and a Makefile containing utilities for setting up the application in a Vagrant box. The commands in Vagrantfile.example use VirtualBox as Vagrant's provider. You can copy the example into a Vagrantfile and make any necessary changes before spinning up your vm.
 
 After setting up Vagrant, `cd` into `/vagrant` and run `make provision-local`
 
