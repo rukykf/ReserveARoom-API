@@ -5,11 +5,11 @@ const _ = require("lodash")
 module.exports = {
   async index(req, res) {
     let roomTypesQueryBuilder = RoomType.query().where("active", "=", 1)
-    if (_.get(req, ["query", "with_rooms"]) === true) {
+    if (_.get(req, ["query", "with_rooms"])) {
       roomTypesQueryBuilder.withGraphFetched("rooms")
     }
 
-    if (_.get(req, ["query", "with_pictures"]) === true) {
+    if (_.get(req, ["query", "with_pictures"])) {
       roomTypesQueryBuilder.withGraphFetched("room_pictures")
     }
 

@@ -1,7 +1,12 @@
 const bcrypt = require("bcrypt")
+const db = require(".../../../../src/data-access/db-config")
 const AuthenticationController = require("../../src/controllers/AuthenticationController")
 const User = require("../../src/data-access/models/User")
 const Role = require("../../src/data-access/models/Role")
+
+beforeAll(async () => {
+  await db.migrate.latest()
+})
 
 test("AuthenticationController.login returns authenticated user when passed valid credentials", async () => {
   await User.query().delete()
@@ -18,10 +23,11 @@ test("AuthenticationController.login returns authenticated user when passed vali
       username: "myuser",
       password: "password",
     },
+    session: {}
   }
   let res = { json: jest.fn() }
   await AuthenticationController.login(req, res)
-  expect(req.session).toMatchObject({ username: "myuser", full_name: "firstname lastname", role_id: newRole.id })
+  expect(req.session).toMatchObject({user: { username: "myuser", full_name: "firstname lastname", role_id: newRole.id }})
   expect(res.json).toHaveBeenCalledWith(
     expect.objectContaining({ username: "myuser", full_name: "firstname lastname", role_id: newRole.id })
   )

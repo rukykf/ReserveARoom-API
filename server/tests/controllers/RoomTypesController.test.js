@@ -1,5 +1,10 @@
+const db = require("../../../server/src/data-access/db-config")
 const RoomType = require("../../src/data-access/models/RoomType")
 const RoomTypesController = require("../../src/controllers/RoomTypesController")
+
+beforeAll(async () => {
+  await db.migrate.latest()
+})
 
 beforeEach(async () => {
   await RoomType.query().delete()

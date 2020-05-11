@@ -1,4 +1,4 @@
-const Objection = require("../db-config")
+const Objection = require("../objection-config")
 
 class RoomPicture extends Objection {
   static get tableName() {
@@ -20,3 +20,5 @@ class RoomPicture extends Objection {
     }
   }
 }
+
+module.exports = RoomPicture

@@ -1,8 +1,9 @@
 const { Router } = require("express")
-// const UsersController = require("../controllers/configuration/UsersController")
+const ReservationsController = require("../src/controllers/ReservationsController")
+const RoomTypesController = require("../src/controllers/RoomTypesController")
 
 let router = Router()
 
-// router.get("/users", UsersController.index)
+router.get("/room-types", RoomTypesController.index)
 
 module.exports = router

@@ -1,3 +1,4 @@
 module.exports = {
-  verbose: false
+  verbose: false,
+  testMatch: ["<rootDir>/tests/**/*.test.js"]
 }

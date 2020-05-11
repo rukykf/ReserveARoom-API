@@ -5,87 +5,6 @@ const Reservation = require("../data-access/models/Reservation")
 const OTP = require("../data-access/models/OTP")
 const sendSMSMessage = require("../libraries/SMSMessage")
 
-function isGuestPhoneNumberValid(req) {
-  let phoneNumber = _.get(req, ["body", "guest_phone_number"])
-  if (phoneNumber == null) {
-    return false
-  }
-
-  //let re = /^\+{0,2}([\-\. ])?(\(?\d{0,3}\))?([\-\. ])?\(?\d{0,3}\)?([\-\. ])?\d{3}([\-\. ])?\d{4}/
-  let re = /^\+(?:[0-9] ?){6,14}[0-9]$/
-  return re.test(phoneNumber)
-}
-
-function isReservationDateValid(req) {
-  //These dates should be ISO dates with timezones attached e.g 2020-04-28T00:00:00.000+01:00
-  let startDate = _.trim(_.get(req, ["body", "start_datetime"]))
-  let endDate = _.trim(_.get(req, ["body", "end_datetime"]))
-
-  if (startDate == null || endDate == null) {
-    return false
-  }
-
-  if (
-    DateTime.fromISO(startDate).toLocal().toISODate() == null ||
-    DateTime.fromISO(endDate).toLocal().toISODate() == null
-  ) {
-    return false
-  }
-
-  if (DateTime.fromISO(startDate).toLocal().toISODate() <= DateTime.local().toISODate()) {
-    return false
-  }
-
-  if (endDate < startDate) {
-    return false
-  }
-
-  return true
-}
-
-function generateOTP() {
-  var digits = "0123456789"
-  let otp = ""
-  for (let i = 0; i < 6; i++) {
-    otp += digits[Math.floor(Math.random() * 10)]
-  }
-  return otp
-}
-
-async function checkReservationForConflicts(req) {
-  // check start date
-  let startDate = DateTime.fromISO(req.body.start_datetime).toLocal().toISODate()
-
-  let reservation
-  reservation = await Reservation.query()
-    .where("start_date", "<=", startDate)
-    .andWhere("end_date", ">=", startDate)
-    .andWhere(function () {
-      this.where("status", "=", "open").orWhere("status", "=", "activated")
-    })
-    .first()
-
-  if (reservation != null) {
-    return "a reservation already exists at the selected start date"
-  }
-
-  // check end date
-  let endDate = DateTime.fromISO(req.body.end_datetime).toLocal().toISODate()
-  reservation = await Reservation.query()
-    .where("start_date", "<=", endDate)
-    .andWhere("end_date", ">=", endDate)
-    .andWhere(function () {
-      this.where("status", "=", "open").orWhere("status", "=", "activated")
-    })
-    .first()
-
-  if (reservation != null) {
-    return "a reservation already exists at the selected end date"
-  }
-
-  return null
-}
-
 module.exports = {
   /**
    * Returns a list of all reservations with the rooms that these reservations are associated with
@@ -288,4 +207,97 @@ module.exports = {
       return res.status(500).json({ message: "something went wrong, try again later" })
     }
   },
+}
+
+function isReservationDateValid(req) {
+  //These dates should be ISO dates with timezones attached e.g 2020-04-28T00:00:00.000+01:00
+  let startDate = _.trim(_.get(req, ["body", "start_datetime"]))
+  let endDate = _.trim(_.get(req, ["body", "end_datetime"]))
+
+  if (startDate == null || endDate == null) {
+    return false
+  }
+
+  if (
+      DateTime.fromISO(startDate).toLocal().toISODate() == null ||
+      DateTime.fromISO(endDate).toLocal().toISODate() == null
+  ) {
+    return false
+  }
+
+  if (DateTime.fromISO(startDate).toLocal().toISODate() <= DateTime.local().toISODate()) {
+    return false
+  }
+
+  if (endDate < startDate) {
+    return false
+  }
+
+  return true
+}
+
+function isGuestPhoneNumberValid(req) {
+  let phoneNumber = _.get(req, ["body", "guest_phone_number"])
+  if (phoneNumber == null) {
+    return false
+  }
+
+  //let re = /^\+{0,2}([\-\. ])?(\(?\d{0,3}\))?([\-\. ])?\(?\d{0,3}\)?([\-\. ])?\d{3}([\-\. ])?\d{4}/
+  let re = /^\+(?:[0-9] ?){6,14}[0-9]$/
+  return re.test(phoneNumber)
+}
+
+function generateOTP() {
+  var digits = "0123456789"
+  let otp = ""
+  for (let i = 0; i < 6; i++) {
+    otp += digits[Math.floor(Math.random() * 10)]
+  }
+  return otp
+}
+
+async function checkReservationForConflicts(req) {
+  let startDate = DateTime.fromISO(req.body.start_datetime)
+      .toLocal()
+      .toISODate()
+  let endDate = DateTime.fromISO(req.body.end_datetime)
+      .toLocal()
+      .toISODate()
+
+  let reservation = await Reservation.query()
+      .where((builder) => {
+        builder
+            .where("start_date", "<=", startDate)
+            .andWhere("end_date", ">=", startDate)
+            .andWhere("status", "=", "open")
+            .andWhere("room_id", "=", _.toNumber(req.params.id))
+      })
+      .orWhere((builder) => {
+        builder
+            .where("start_date", "<=", endDate)
+            .andWhere("end_date", ">=", endDate)
+            .andWhere("status", "=", "open")
+            .andWhere("room_id", "=", _.toNumber(req.params.id))
+      })
+      .orWhere((builder) => {
+        builder
+            .where("start_date", ">", startDate)
+            .andWhere("end_date", "<", endDate)
+            .andWhere("status", "=", "open")
+            .andWhere("room_id", "=", _.toNumber(req.params.id))
+      })
+      .orWhere((builder) => {
+        builder
+            .where("start_date", "<", startDate)
+            .andWhere("end_date", ">", endDate)
+            .andWhere("status", "=", "open")
+            .andWhere("room_id", "=", _.toNumber(req.params.id))
+      })
+      .first()
+
+  if (reservation != null) {
+    return "this room already has a reservation for the selected dates, cancel those reservations first"
+  }
+
+  return null
 }

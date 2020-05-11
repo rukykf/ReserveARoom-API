@@ -4,7 +4,7 @@
   "description": "submission for the Twilio Dev hackathon",
   "main": "index.js",
   "scripts": {
-    "test": "jest ../src/tests --runInBand"
+    "test": "jest ./tests"
   },
   "author": "Kofi Oghenerukevwe H.",
   "license": "MIT",

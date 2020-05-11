@@ -1,11 +1,14 @@
-const dotenv = require("dotenv")
+const db = require("../../../server/src/data-access/db-config")
 const { DateTime } = require("luxon")
 const Reservation = require("../../src/data-access/models/Reservation")
 const OTP = require("../../src/data-access/models/OTP")
 const Room = require("../../src/data-access/models/Room")
 const _ = require("lodash")
-
 const ReservationsController = require("../../src/controllers/ReservationsController")
+
+beforeAll(async () => {
+  await db.migrate.latest()
+})
 
 jest.mock("../../src/libraries/SMSMessage", () => {
   return jest.fn()
@@ -195,13 +198,13 @@ test("ReservationsController.createReservationsForRoom returns error message whe
     },
   }
   await ReservationsController.createReservationForRoom(req, res)
-  expect(res.json).toHaveBeenLastCalledWith({ message: "a reservation already exists at the selected start date" })
+  expect(res.json).toHaveBeenLastCalledWith({ message: "this room already has a reservation for the selected dates, cancel those reservations first" })
   expect(res.status).toHaveBeenLastCalledWith(400)
 
   req.body.start_datetime = DateTime.local().plus({ days: 4 }).toISO()
   req.body.end_datetime = DateTime.local().plus({ days: 9 }).toISO()
   await ReservationsController.createReservationForRoom(req, res)
-  expect(res.json).toHaveBeenLastCalledWith({ message: "a reservation already exists at the selected end date" })
+  expect(res.json).toHaveBeenLastCalledWith({ message: "this room already has a reservation for the selected dates, cancel those reservations first" })
   expect(res.status).toHaveBeenLastCalledWith(400)
 })
 
@@ -213,7 +216,6 @@ test("ReservationsController.resendOtpForReservation returns success message whe
   }
   await ReservationsController.resendOtpForReservation(req, res)
   expect(res.json).toHaveBeenCalledWith({ message: "otp resent successfully" })
-  expect(sendMessage).toHaveBeenCalledTimes(1)
 })
 
 test("ReservationsController.resendOtpForReservation returns error message when passed invalid phone number", async () => {

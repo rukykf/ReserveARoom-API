@@ -1,5 +1,5 @@
 const { ValidationError } = require("objection")
-const Objection = require("../db-config")
+const Objection = require("../objection-config")
 const _ = require("lodash")
 
 class RoomType extends Objection {
@@ -17,7 +17,7 @@ class RoomType extends Objection {
         modelClass: Room,
         join: {
           from: "room_types.id",
-          to: "room.room_type_id",
+          to: "rooms.room_type_id",
         },
       },
 

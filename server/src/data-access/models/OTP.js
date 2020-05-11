@@ -1,4 +1,4 @@
-const Objection = require("../db-config")
+const Objection = require("../objection-config")
 const { DateTime } = require("luxon")
 
 class OTP extends Objection {

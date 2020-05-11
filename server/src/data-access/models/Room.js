@@ -1,4 +1,4 @@
-const Objection = require("../db-config")
+const Objection = require("../objection-config")
 const _ = require("lodash")
 
 class Room extends Objection {

@@ -1,3 +1,4 @@
+const db = require("../../../server/src/data-access/db-config")
 const Room = require("../../src/data-access/models/Room")
 const RoomType = require("../../src/data-access/models/RoomType")
 const RoomsController = require("../../src/controllers/RoomsController")
@@ -5,6 +6,7 @@ const RoomsController = require("../../src/controllers/RoomsController")
 let newRoomType = null
 
 beforeAll(async () => {
+  await db.migrate.latest()
   newRoomType = await RoomType.query().insert({
     name: "room type",
     price_per_night: 9000,
