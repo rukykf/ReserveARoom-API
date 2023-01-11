@@ -19,7 +19,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "faker": "^4.1.0",
-    "knex": "^0.21.0",
+    "knex": "^2.4.0",
     "lodash": "^4.17.15",
     "luxon": "^1.23.0",
     "nodemon": "^2.0.3",
